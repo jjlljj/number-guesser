@@ -60,8 +60,19 @@ rangeSubmit.addEventListener('click', function(){
       rangeMin.value = '';
       rangeMax.value = '';
     }
-  }  else {
-    randomNumber =  Math.floor(Math.random() * maxMath) + 1 + minNumber; 
+  } else if(maxMath - minNumber <= 5) {
+    if (clickCount%2 === 1) {
+      guessBetween.innerText = "That's too easy... Two numbers please!!"
+      rangeMin.value = '';
+      rangeMax.value = '';
+    } else {
+      guessBetween.innerText = "That's no fun... Two numbers please!!"
+      rangeMin.value = '';
+      rangeMax.value = '';
+    }
+  }
+    else { 
+    randomNumber =  Math.floor(Math.random() * maxMath) + 1 +  minNumber;
     console.log(randomNumber);
     //brings up game panel
     rangeContainer.style.visibility = "hidden";
@@ -179,7 +190,7 @@ gameReset.addEventListener('click', function(){
     lastGuessWas.innerText = "You have won " + winCount + " times";
   }
   // for new number
-  randomNumber =  Math.floor(Math.random() * maxMath) + 1 + minNumber ;
+  randomNumber =  Math.floor(Math.random() * maxMath) + minNumber ;
   maxNumber = maxMath + minNumber;
   userGuess.innerText = "??"
   gameHint.innerText = "Guess away!!";
