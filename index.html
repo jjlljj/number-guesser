@@ -12,9 +12,10 @@
   <h1><a href="index.html"><span>Number</span> Guesser</a></h1>
 </header>
 
-<form action="#" id="game-container">
+<form action="#" id="game-container" onsubmit="return false">
   <fieldset class="interact-cont">
-    <input type="text" id="user-input" placeholder="Enter your guess">
+    <input type="text" id="user-input" placeholder="Enter your guess" ;" 
+    >
         <button id="input-submit" type="submit">Guess</button>
         <button id="clear-button">Clear</button>
         <section>
@@ -29,7 +30,7 @@
   </fieldset>
 </form>
 
-<form action="#" id="range-container">
+<form action="#" onsubmit="return false" id="range-container">
   <h2 id="guess-between"> What numbers do you want to guess between? </h2>
   <fieldset>
     <input type="text" id="range-min" placeholder="Lowest Number">

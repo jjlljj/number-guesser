@@ -27,17 +27,25 @@ var guessBetween = document.querySelector('#guess-between');
 // var maxMath = 100;
 // var minNumber = 0;
 var minNumber = 0;
-var maxMath = 100;
+var maxMath = 0;
 var maxNumber = maxMath + minNumber;
 var randomNumber = 0;
 var guessAsNumber = parseInt(userInput.value);
 var clickCount = 0;   // this is for the range submit so that the answers are varied
+var inputMax = userInput.max;
+var inputMin = userInput.min;
 
+inputMax = maxNumber;
+inputMin = minNumber;
 
 // range set button
 rangeSubmit.addEventListener('click', function(){
+
+   // .preventDefault('submit');
+
   minNumber = parseInt(rangeMin.value);
-  maxMath = parseInt(rangeMax.value);
+  maxMath = parseInt(rangeMax.value - rangeMin.value);
+  maxNumber = parseInt(rangeMax.value);
   clickCount += 1;
 
   if (isNaN(minNumber) || isNaN(maxMath)) {
@@ -75,10 +83,12 @@ rangeSubmit.addEventListener('click', function(){
     randomNumber =  Math.floor(Math.random() * maxMath) + 1 +  minNumber;
     console.log(randomNumber);
     //brings up game panel
+    inputSubmit.disabled = false;
     rangeContainer.style.visibility = "hidden";
     gameContainer.style.visibility = "visible";
-    inputSubmit.disabled = false;
+    
     clickCount = 0;
+
   }
 });
 
@@ -100,24 +110,24 @@ gameReset.disabled = true;
 var win = false;
 var winCount = 0;
 
+
 // clear button
-inputClear.addEventListener('click', function(){
+inputClear.addEventListener('click', function(){clear()});
+
+function clear() {
   inputClear.disabled = true;
   userInput.value = '';
   userGuess.innerText = "??"
   lastGuessWas.innerText = "Guess the number";
   gameHint.innerText = "Win the game";
   console.log('all clear');
- }
-);
-
-// // so i don't have to actually play the game...
-// console.log(randomNumber);
+}
 
 // gives you the hints...
 function numberGuesser(guess, number){
   var guessAsNumber = parseInt(guess.value);
   inputClear.disabled = false;
+  console.log("max is " + maxNumber);
 
 
   if (isNaN(guessAsNumber)) {
@@ -170,44 +180,75 @@ function numberGuesser(guess, number){
 inputSubmit.addEventListener('click', function(){ numberGuesser(userInput,randomNumber)});
 
 
-// reload
-gameReset.addEventListener('click', function(){
-  console.log(win + " " + winCount);
-  // make game more interesting by increasing range
-  if (winCount > 5 && win === true ) {
-    maxMath += 100;
-    minNumber -= 50;
-  } else if (win === true) {
-    maxMath += 20;
-    minNumber -= 10;
-  };
-  // win count keeper
-  if (winCount === 0 ) {
-    lastGuessWas.innerText = "Ready to play??";
-  } else if (winCount === 1) {
-     lastGuessWas.innerText = "You have 1 win";
-  } else {
-    lastGuessWas.innerText = "You have won " + winCount + " times";
-  }
-  // for new number
-  randomNumber =  Math.floor(Math.random() * maxMath) + minNumber ;
-  maxNumber = maxMath + minNumber;
-  userGuess.innerText = "??"
-  gameHint.innerText = "Guess away!!";
-  gameReset.innerText = "Reset";
-  userInput.value = '';
-  win = false;
-  // button states
-  inputSubmit.disabled = false;
-  inputClear.disabled = true;
-  gameReset.disabled = true;
+function reset() {
+    console.log(win + " " + winCount);
+    // make game more interesting by increasing range
+    if (winCount > 5 && win === true ) {
+      maxMath += 100;
+      minNumber -= 50;
+    } else if (win === true) {
+      maxMath += 20;
+      minNumber -= 10;
+    };
+    // win count keeper
+    if (winCount === 0 ) {
+      lastGuessWas.innerText = "Ready to play??";
+    } else if (winCount === 1) {
+       lastGuessWas.innerText = "You have 1 win";
+    } else {
+      lastGuessWas.innerText = "You have won " + winCount + " times";
+    }
+    // for new number
+    randomNumber =  Math.floor(Math.random() * maxMath) + minNumber ;
 
-  console.log('reset');
-  console.log(randomNumber);
-  console.log('max number ' + maxNumber)
-  console.log('min number ' + minNumber)
+    inputMax = maxNumber;
+    inputMin = minNumber;
+
+    maxNumber = maxMath + minNumber;
+    userGuess.innerText = "??"
+    gameHint.innerText = "Guess away!!";
+    gameReset.innerText = "Reset";
+    userInput.value = '';
+    win = false;
+    // button states
+    inputSubmit.disabled = false;
+    inputClear.disabled = true;
+    gameReset.disabled = true;
+
+    console.log('reset');
+    console.log(randomNumber);
+    console.log('max number ' + maxNumber)
+    console.log('min number ' + minNumber)
 }
-);
+
+// limit key input to min & max
+function inputLimit(keyValue) {
+  if  (parseInt(keyValue) > maxNumber) {
+    return maxNumber;
+    alert('maxmax')
+  } else if (parseInt(keyValue) < minNumber) {
+    return minNumber;
+    alert('minmin')
+  } else {
+    return keyValue;
+  }
+}
+
+// exclude '-' from key limit 
+userInput.addEventListener('keyup', function(){
+  keyStroke = this.value;
+  if (keyStroke === "-") {
+    return keyStroke
+  } else if(isNaN(keyStroke)) {
+    this.value = ""
+  } else {
+    keyStroke = inputLimit(keyStroke);
+    this.value = keyStroke;
+  }
+});
+
+// reload
+gameReset.addEventListener('click', function(){reset()});
 
 
 
