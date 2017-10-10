@@ -234,7 +234,7 @@ function inputLimit(keyValue) {
   }
 }
 
-// exclude '-' from key limit 
+// limit key inputs excluding '-' & numbers
 userInput.addEventListener('keyup', function(){
   keyStroke = this.value;
   if (keyStroke === "-") {
@@ -249,7 +249,3 @@ userInput.addEventListener('keyup', function(){
 
 // reload
 gameReset.addEventListener('click', function(){reset()});
-
-
-
-
