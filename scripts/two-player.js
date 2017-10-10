@@ -19,6 +19,8 @@ var lastGuessWas = document.querySelector('#last-guess-was');
 var gameHint = document.querySelector('#game-hint') ; 
 var userGuess = document.querySelector('#user-guess');
 var guessBetween = document.querySelector('#guess-between');
+var playerOneScore = document.querySelector('.p1')
+var playerTwoScore = document.querySelector('.p2')
 
 // math
 var minNumber = 0;
@@ -31,6 +33,9 @@ var inputMax = userInput.max;
 var inputMin = userInput.min;
 var win = false;
 var winCount = 0;
+var gameCount = 1;
+var playerOneWins = 0;
+var playerTwoWins = 0;
 
 inputMax = maxNumber;
 inputMin = minNumber;
@@ -40,6 +45,8 @@ gameContainer.style.visibility = "hidden";
 rangeContainer.style.visibility = "visible";
 inputClear.disabled = true;
 gameReset.disabled = true;
+userInput.disabled = true;
+
 
 // event listeners
 rangeSubmit.addEventListener('click', function(){ setRange() });
@@ -93,7 +100,7 @@ function setRange() {
     getRandomNumber(maxMath, minNumber);
     console.log(randomNumber);
     //brings up game panel
-    inputSubmit.disabled = false;
+    inputSubmit.disabled = true;
     rangeContainer.style.visibility = "hidden";
     gameContainer.style.visibility = "visible";
     clickCount = 0;
@@ -141,29 +148,37 @@ function numberGuesser(guess, number){
     } else if (guessAsNumber < number) {
       gameHint.innerText = "That is too low";
     } else if (guessAsNumber === number) {
-      if (winCount > 0) {
-      lastGuessWas.innerText = "BOOM!! You Win Again!!!";
-      } else {
       lastGuessWas.innerText = "BOOM!! You Win!!!";
-      }
+
       gameHint.innerText = "Play again??";
       gameReset.innerText = "Yes";
       win = true;
-      winCount += 1;
+      if (win === true && gameCount%2 === 1) {
+        playerOneWins += 1;
+        playerOneScore.innerText = playerOneWins;
+        playerTwoScore.innerText = playerTwoWins;
+      } else {
+        playerTwoWins += 1;
+        playerOneScore.innerText = playerOneWins;
+        playerTwoScore.innerText = playerTwoWins;
+      }
       inputSubmit.disabled = true;
       inputClear.disabled = true;
       gameReset.disabled = false;
     }
   }
   userInput.value = '';
+  userInput.focus();
 };
+
+
 
 
 
 // resets random number & 
 function reset() {
     console.log(win + " " + winCount);
-    
+
     if (winCount > 5 && win === true ) {  
       maxMath += 100;
       minNumber -= 50;
@@ -186,14 +201,24 @@ function reset() {
 
     maxNumber = maxMath + minNumber;
     userGuess.innerText = "??"
-    gameHint.innerText = "Guess away!!";
+    gameHint.innerText = "Lets Play!!";
     gameReset.innerText = "Reset";
     userInput.value = '';
+    gameCount += 1;
     win = false;
     // button states
-    inputSubmit.disabled = false;
+    inputSubmit.disabled = true;
     inputClear.disabled = true;
     gameReset.disabled = true;
+    goTimer.disabled = false; 
+
+    if (gameCount%2 ===1 ) {
+      playerOneScore.style.textShadow = '0px 0px 9px #EB008B';
+      playerTwoScore.style.textShadow = 'none';
+    } else {
+      playerOneScore.style.textShadow = 'none';
+      playerTwoScore.style.textShadow = '0px 0px 9px #EB008B';
+    }
 
     console.log('reset');
     console.log(randomNumber);
@@ -229,27 +254,26 @@ userInput.addEventListener('keyup', function(){
 
 var goTimer = document.querySelector("#time");
 
-var timeOut 
 
-function printNumbers() {
-  for (var i = 0; i < 10; i++){
-  timeoutID = window.setTimeout(countDown(i), 800);
-  }
-  goTimer.innerText = "out of time";
-}
+// function printNumbers() {
+//   for (var i = 0; i < 10; i++){
+//   timeoutID = window.setTimeout(countDown(i), 800);
+//   }
+//   goTimer.innerText = "out of time";
+// }
 
-function countDown(num) {
-  console.log(num)
-  goTimer.innerText = num;
-}
+// function countDown(num) {
+//   console.log(num)
+//   goTimer.innerText = num;
+// }
 
-function clearAlert() {
-  window.clearTimeout(timeoutID);
-}
+// function clearAlert() {
+//   window.clearTimeout(timeoutID);
+// }
 
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;
-    setInterval(function () {
+    var id = setInterval(function () {
         minutes = parseInt(timer / 60, 10)
         seconds = parseInt(timer % 60, 10);
 
@@ -258,24 +282,34 @@ function startTimer(duration, display) {
 
         display.innerText = minutes + ":" + seconds;
 
-        if (--timer < 0) {
+        if (--timer < 0 || win === true) {
             timer = 0;
-        display.innerText = 'Time is up!!';
-        inputSubmit.disabled = true;    
+        display.innerText = 'GO';
+        inputSubmit.disabled = true; 
+        gameReset.disabled = false;  
+        clearInterval(id);
         }
     }, 1000);
 
-    
 }
 
 goTimer.addEventListener('click', function () {
     console.log('click')
-    goTimer.innerText = 10;
-    var oneMinute = 10;
-    startTimer(oneMinute, goTimer);
+    inputSubmit.disabled = false;
+    userInput.disabled = false;
+    gameHint.innerText = "Guess away!!";
+    goTimer.innerText = '00:30';
+    var timeInSeconds = 29;
+    startTimer(timeInSeconds, goTimer);
+    goTimer.disabled = true; 
+    if (gameCount%2 ===1 ) {
+      playerOneScore.style.textShadow = '0px 0px 9px #EB008B';
+      playerTwoScore.style.textShadow = 'none';
+    } else {
+      playerOneScore.style.textShadow = 'none';
+      playerTwoScore.style.textShadow = '0px 0px 9px #EB008B';
+    }
   }
 );
-
-
 
 
