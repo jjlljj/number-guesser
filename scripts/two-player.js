@@ -190,17 +190,16 @@ function reset() {
     if (winCount > 5 && win === true ) {  
       maxMath += 100;
       minNumber -= 50;
-    } else if (win === true) {
+    } else if (win === true && gameCount%2 === 0) {
       maxMath += 20;
       minNumber -= 10;
     };
     if (winCount === 0 ) {            
       lastGuessWas.innerText = "Ready to play??";
-    } else if (winCount === 1) {
-       lastGuessWas.innerText = "You have 1 win";
     } else {
-      lastGuessWas.innerText = "You have won " + winCount + " times";
+      lastGuessWas.innerText = "You got the number! ";
     }
+
 
    getRandomNumber(maxMath, minNumber);
 
@@ -300,6 +299,8 @@ function startTimer(duration, display) {
         inputSubmit.disabled = true; 
         gameReset.disabled = false; 
         userInput.disabled = true; 
+        lastGuessWas.innerText = "Guess the number";
+        gameHint.innerText = "Win the game";
         clearInterval(id);
         }
     }, 1000);
