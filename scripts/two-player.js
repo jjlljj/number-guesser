@@ -14,6 +14,9 @@ var rangeMin = document.querySelector('#range-min');
 var rangeMax = document.querySelector('#range-max');
 //range submit selector
 var rangeSubmit = document.querySelector('#range-submit');
+// timer selector
+var goTimer = document.querySelector("#time");
+
 // field selectors
 var lastGuessWas = document.querySelector('#last-guess-was');
 var gameHint = document.querySelector('#game-hint') ; 
@@ -104,6 +107,7 @@ function setRange() {
     rangeContainer.style.visibility = "hidden";
     gameContainer.style.visibility = "visible";
     clickCount = 0;
+    goTimer.focus();
   }
 };
 
@@ -165,10 +169,14 @@ function numberGuesser(guess, number){
       inputSubmit.disabled = true;
       inputClear.disabled = true;
       gameReset.disabled = false;
+
     }
   }
   userInput.value = '';
-  userInput.focus();
+  if (win === true ) {
+    gameReset.focus();
+  } else {userInput.focus();
+  }
 };
 
 
@@ -220,6 +228,8 @@ function reset() {
       playerTwoScore.style.textShadow = '0px 0px 9px #EB008B';
     }
 
+    goTimer.focus();
+
     console.log('reset');
     console.log(randomNumber);
     console.log('max number ' + maxNumber)
@@ -239,7 +249,7 @@ function inputLimit(keyValue) {
   }
 }
 
-// limit key inputs excluding '-' & numbers
+// limit key inputs excluding '-' & numbers on game input
 userInput.addEventListener('keyup', function(){
   keyStroke = this.value;
   if (keyStroke === "-") {
@@ -252,24 +262,26 @@ userInput.addEventListener('keyup', function(){
   }
 });
 
-var goTimer = document.querySelector("#time");
+// limit key inputs on range to numbers only
+rangeMin.addEventListener('keyup', function(){
+  keyStroke = this.value;
+  if (keyStroke === "-") {
+    return keyStroke
+  } else if(isNaN(keyStroke)) {
+    this.value = ""}
+});
+
+rangeMax.addEventListener('keyup', function(){
+  keyStroke = this.value;
+  if (keyStroke === "-") {
+    return keyStroke
+  } else if(isNaN(keyStroke)) {
+    this.value = ""}
+});
 
 
-// function printNumbers() {
-//   for (var i = 0; i < 10; i++){
-//   timeoutID = window.setTimeout(countDown(i), 800);
-//   }
-//   goTimer.innerText = "out of time";
-// }
 
-// function countDown(num) {
-//   console.log(num)
-//   goTimer.innerText = num;
-// }
 
-// function clearAlert() {
-//   window.clearTimeout(timeoutID);
-// }
 
 function startTimer(duration, display) {
     var timer = duration, minutes, seconds;
@@ -286,7 +298,8 @@ function startTimer(duration, display) {
             timer = 0;
         display.innerText = 'GO';
         inputSubmit.disabled = true; 
-        gameReset.disabled = false;  
+        gameReset.disabled = false; 
+        userInput.disabled = true; 
         clearInterval(id);
         }
     }, 1000);
@@ -302,6 +315,7 @@ goTimer.addEventListener('click', function () {
     var timeInSeconds = 29;
     startTimer(timeInSeconds, goTimer);
     goTimer.disabled = true; 
+    userInput.focus();
     if (gameCount%2 ===1 ) {
       playerOneScore.style.textShadow = '0px 0px 9px #EB008B';
       playerTwoScore.style.textShadow = 'none';
