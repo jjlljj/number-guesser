@@ -107,6 +107,7 @@ function setRange() {
     rangeContainer.style.visibility = "hidden";
     gameContainer.style.visibility = "visible";
     clickCount = 0;
+    console.log('focus')
     goTimer.focus();
   }
 };
@@ -153,7 +154,6 @@ function numberGuesser(guess, number){
       gameHint.innerText = "That is too low";
     } else if (guessAsNumber === number) {
       lastGuessWas.innerText = "BOOM!! You Win!!!";
-
       gameHint.innerText = "Play again??";
       gameReset.innerText = "Yes";
       win = true;
@@ -299,8 +299,11 @@ function startTimer(duration, display) {
         inputSubmit.disabled = true; 
         gameReset.disabled = false; 
         userInput.disabled = true; 
-        lastGuessWas.innerText = "Guess the number";
-        gameHint.innerText = "Win the game";
+        if (win !== true ) {
+        lastGuessWas.innerText = "You didn't guess the number";
+        gameHint.innerText = "And you're out of time";
+        gameReset.focus();
+        }
         clearInterval(id);
         }
     }, 1000);
@@ -311,6 +314,7 @@ goTimer.addEventListener('click', function () {
     console.log('click')
     inputSubmit.disabled = false;
     userInput.disabled = false;
+    lastGuessWas.innerText = "Ready to play??";
     gameHint.innerText = "Guess away!!";
     goTimer.innerText = '00:30';
     var timeInSeconds = 29;

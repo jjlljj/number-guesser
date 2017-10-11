@@ -42,6 +42,10 @@ h1 a span {
   font-weight: bold 700;
 }
 
+label {
+  display: none;
+}
+
 /* game input */
 
 form {
