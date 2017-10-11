@@ -72,7 +72,7 @@ function setRange() {
   if (isNaN(minNumber) || isNaN(maxMath)) {
     if(clickCount%2 === 1){
       guessBetween.innerText = 'Two Numbers please!!';
-     rangeMin.value = '';
+      rangeMin.value = '';
       rangeMax.value = '';
     } else {
       guessBetween.innerText = 'Please enter two numbers!!';
@@ -111,6 +111,7 @@ function setRange() {
     goTimer.focus();
   }
 };
+
 
 // clear function
 function clear() {

@@ -88,9 +88,6 @@ h2 {
   color: #EB008B;
 }
 
-
-
-
 /*buttons stylee*/
 
 button {
@@ -113,9 +110,7 @@ button:disabled {
 .reset {
   font-size: 1.1em;
   width: 360px;
- /* margin-top: 10px;*/
 }
-
 
 /* min max box */
 #range-container {
