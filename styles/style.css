@@ -38,6 +38,7 @@ h1 a span {
 .scoreboard {
   font-size: 2.5em;
 }
+
 .p1 .p2 {
   font-weight: bold 700;
 }
@@ -112,6 +113,12 @@ button:disabled {
   width: 360px;
 }
 
+.front-page-button {
+  width: 400px;
+  height: 100px;
+  margin: 20px auto;
+}
+
 /* min max box */
 #range-container {
   width: 50%;
@@ -142,6 +149,12 @@ a:visited {
   color: #FFFFFF;
 }
 
+//box model to organize
+// margin
+// border 
+// padding 
+// then background color, etc - idiomatic css
+// alphabetize selectors 
 
-
+// ux - more user feedback
 
