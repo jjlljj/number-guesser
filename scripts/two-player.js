@@ -1,7 +1,6 @@
 // container selectors
 var gameContainer = document.querySelector('#game-container')
 var rangeContainer = document.querySelector('#range-container')
-
 // input selector
 var userInput = document.querySelector('#user-input');
 // input button selector
@@ -14,11 +13,15 @@ var rangeMin = document.querySelector('#range-min');
 var rangeMax = document.querySelector('#range-max');
 //range submit selector
 var rangeSubmit = document.querySelector('#range-submit');
+// timer selector
+var goTimer = document.querySelector("#time");
 // field selectors
 var lastGuessWas = document.querySelector('#last-guess-was');
 var gameHint = document.querySelector('#game-hint') ; 
 var userGuess = document.querySelector('#user-guess');
 var guessBetween = document.querySelector('#guess-between');
+var playerOneScore = document.querySelector('.p1')
+var playerTwoScore = document.querySelector('.p2')
 
 // math
 var minNumber = 0;
@@ -31,6 +34,9 @@ var inputMax = userInput.max;
 var inputMin = userInput.min;
 var win = false;
 var winCount = 0;
+var gameCount = 1;
+var playerOneWins = 0;
+var playerTwoWins = 0;
 
 inputMax = maxNumber;
 inputMin = minNumber;
@@ -40,9 +46,11 @@ gameContainer.style.visibility = "hidden";
 rangeContainer.style.visibility = "visible";
 inputClear.disabled = true;
 gameReset.disabled = true;
+userInput.disabled = true;
+
 
 // event listeners
-rangeSubmit.addEventListener('click', function(){ setRange() });
+rangeSubmit.addEventListener('click', setRange);
 inputClear.addEventListener('click', function(){ clear() });
 // call guessing function!!
 inputSubmit.addEventListener('click', function(){ numberGuesser( userInput, randomNumber) });
@@ -53,6 +61,12 @@ function getRandomNumber(range, min) {
   randomNumber =  Math.floor(Math.random() * range) +  min;
 }
 
+function rangeFeedback(text){
+   guessBetween.innerText = text;
+    rangeMin.value = '';
+    rangeMax.value = '';
+}
+
 function setRange() {
   minNumber = parseInt(rangeMin.value);
   maxMath = parseInt(rangeMax.value - rangeMin.value);
@@ -61,53 +75,52 @@ function setRange() {
 
   if (isNaN(minNumber) || isNaN(maxMath)) {
     if(clickCount%2 === 1){
-      guessBetween.innerText = 'Two Numbers please!!';
-     rangeMin.value = '';
-      rangeMax.value = '';
+      rangeFeedback('Two Numbers please!!');
     } else {
-      guessBetween.innerText = 'Please enter two numbers!!';
-      rangeMin.value = '';
-      rangeMax.value = '';
+      rangeFeedback('Please enter two numbers!!');
     }
   } else if (minNumber >= maxMath) {
     if (clickCount%2 === 1) {
-      guessBetween.innerText = 'Very funny... Two numbers please!!'
-      rangeMin.value = '';
-      rangeMax.value = '';
+      rangeFeedback('Very funny... Two numbers please!!');
     } else {
-      guessBetween.innerText = 'Good joke... Two numbers please!!'
-      rangeMin.value = '';
-      rangeMax.value = '';
+      rangeFeedback('Good joke... Two numbers please!!');
     }
   } else if(maxMath - minNumber <= 5) {
     if (clickCount%2 === 1) {
-      guessBetween.innerText = "That's too easy... Two numbers please!!"
-      rangeMin.value = '';
-      rangeMax.value = '';
+      rangeFeedback("That's too easy... Two numbers please!!")
     } else {
-      guessBetween.innerText = "That's no fun... Two numbers please!!"
-      rangeMin.value = '';
-      rangeMax.value = '';
+      rangeFeedback("That's no fun... Two numbers please!!")
     }
   } else { 
     getRandomNumber(maxMath, minNumber);
     console.log(randomNumber);
     //brings up game panel
-    inputSubmit.disabled = false;
+    inputSubmit.disabled = true;
     rangeContainer.style.visibility = "hidden";
     gameContainer.style.visibility = "visible";
     clickCount = 0;
+    console.log('focus')
+    goTimer.focus();
   }
 };
+
+function gameFeeback(upperText, guessText, lowerText) {
+  lastGuessWas.innerText = upperText;
+  userGuess.innerText = guessText;
+  gameHint.innerText = lowerText;
+}
 
 // clear function
 function clear() {
   inputClear.disabled = true;
   userInput.value = '';
-  userGuess.innerText = "??"
-  lastGuessWas.innerText = "Guess the number";
-  gameHint.innerText = "Win the game";
+  gameFeeback('Guess the number','??','Win the game');
   console.log('all clear');
+}
+//keep score
+function scoreBoard() {
+  playerOneScore.innerText = playerOneWins;
+  playerTwoScore.innerText = playerTwoWins;
 }
 
 // hint & gameplay function
@@ -117,88 +130,85 @@ function numberGuesser(guess, number){
   console.log("max is " + maxNumber);
 
   if (isNaN(guessAsNumber)) {
-    userGuess.innerText = ":(";
-    lastGuessWas.innerText = "That is not a number!";
-    gameHint.innerText = "Please enter a number";
+    gameFeeback("That is not a number!",":(","Please enter a number")
     console.log('number check fail')
-
-  } else if (guessAsNumber > maxNumber) {
-    console.log('max number');
-    lastGuessWas.innerText = "Too big!!"
-    userGuess.innerText = "??"
-    gameHint.innerText = "The maximum number is " + maxNumber;
-  } else if (guessAsNumber < minNumber) {
-    console.log('min number');
-    lastGuessWas.innerText = "Too low!!";
-    userGuess.innerText = "??";
-    gameHint.innerText = "The minimum number is " + minNumber;
-  }  else {
+  } else {
   userGuess.innerText = userInput.value; 
   lastGuessWas.innerText = "Your last guess was";
-
     if(guessAsNumber > number) {
       gameHint.innerText = "That is too high";
     } else if (guessAsNumber < number) {
       gameHint.innerText = "That is too low";
     } else if (guessAsNumber === number) {
-      if (winCount > 0) {
-      lastGuessWas.innerText = "BOOM!! You Win Again!!!";
-      } else {
-      lastGuessWas.innerText = "BOOM!! You Win!!!";
-      }
-      gameHint.innerText = "Play again??";
+      gameFeeback('BOOM!! You Win!!!', userInput.value,'Play again??')
       gameReset.innerText = "Yes";
       win = true;
-      winCount += 1;
+      if (win === true && gameCount%2 === 1) {
+        playerOneWins += 1;
+        scoreBoard();
+      } else {
+        playerTwoWins += 1;
+        scoreBoard();
+      }
       inputSubmit.disabled = true;
       inputClear.disabled = true;
       gameReset.disabled = false;
     }
   }
   userInput.value = '';
+  if (win === true ) {
+    gameReset.focus();
+  } else {userInput.focus();
+  }
 };
-
-
 
 // resets random number & 
 function reset() {
-    console.log(win + " " + winCount);
-    
-    if (winCount > 5 && win === true ) {  
-      maxMath += 100;
-      minNumber -= 50;
-    } else if (win === true) {
-      maxMath += 20;
-      minNumber -= 10;
-    };
-    if (winCount === 0 ) {            
-      lastGuessWas.innerText = "Ready to play??";
-    } else if (winCount === 1) {
-       lastGuessWas.innerText = "You have 1 win";
+  console.log(win + " " + winCount);
+
+  if (winCount > 5 && win === true ) {  
+    maxMath += 100;
+    minNumber -= 50;
+  } else if (win === true && gameCount%2 === 0) {
+    maxMath += 20;
+    minNumber -= 10;
+  };
+  if (winCount === 0 ) {            
+    lastGuessWas.innerText = "Ready to play??";
+  } else {
+    lastGuessWas.innerText = "You got the number! ";
+  }
+
+  getRandomNumber(maxMath, minNumber);
+
+  inputMax = maxNumber;
+  inputMin = minNumber;
+
+  maxNumber = maxMath + minNumber;
+  userGuess.innerText = "??"
+  gameHint.innerText = "Lets Play!!";
+  gameReset.innerText = "Reset";
+  userInput.value = '';
+  gameCount += 1;
+  win = false;
+  // button states
+  inputSubmit.disabled = true;
+  inputClear.disabled = true;
+  gameReset.disabled = true;
+  goTimer.disabled = false; 
+
+  if (gameCount%2 ===1 ) {
+    playerHighlight('0px 0px 9px #EB008B', 'none')
     } else {
-      lastGuessWas.innerText = "You have won " + winCount + " times";
+    playerHighlight('none', '0px 0px 9px #EB008B')
     }
 
-   getRandomNumber(maxMath, minNumber);
+  goTimer.focus();
 
-    inputMax = maxNumber;
-    inputMin = minNumber;
-
-    maxNumber = maxMath + minNumber;
-    userGuess.innerText = "??"
-    gameHint.innerText = "Guess away!!";
-    gameReset.innerText = "Reset";
-    userInput.value = '';
-    win = false;
-    // button states
-    inputSubmit.disabled = false;
-    inputClear.disabled = true;
-    gameReset.disabled = true;
-
-    console.log('reset');
-    console.log(randomNumber);
-    console.log('max number ' + maxNumber)
-    console.log('min number ' + minNumber)
+  console.log('reset');
+  console.log(randomNumber);
+  console.log('max number ' + maxNumber)
+  console.log('min number ' + minNumber)
 }
 
 // limit key input to min & max
@@ -214,7 +224,7 @@ function inputLimit(keyValue) {
   }
 }
 
-// limit key inputs excluding '-' & numbers
+// limit key inputs excluding '-' & numbers on game input
 userInput.addEventListener('keyup', function(){
   keyStroke = this.value;
   if (keyStroke === "-") {
@@ -227,55 +237,68 @@ userInput.addEventListener('keyup', function(){
   }
 });
 
-var goTimer = document.querySelector("#time");
+// limit key inputs on range to numbers only
+rangeMin.addEventListener('keyup', function(){
+  keyStroke = this.value;
+  if (keyStroke === "-") {
+    return keyStroke
+  } else if(isNaN(keyStroke)) {
+    this.value = ""}
+});
 
-var timeOut 
-
-function printNumbers() {
-  for (var i = 0; i < 10; i++){
-  timeoutID = window.setTimeout(countDown(i), 800);
-  }
-  goTimer.innerText = "out of time";
-}
-
-function countDown(num) {
-  console.log(num)
-  goTimer.innerText = num;
-}
-
-function clearAlert() {
-  window.clearTimeout(timeoutID);
-}
+rangeMax.addEventListener('keyup', function(){
+  keyStroke = this.value;
+  if (keyStroke === "-") {
+    return keyStroke
+  } else if(isNaN(keyStroke)) {
+    this.value = ""}
+});
 
 function startTimer(duration, display) {
-    var timer = duration, minutes, seconds;
-    setInterval(function () {
-        minutes = parseInt(timer / 60, 10)
-        seconds = parseInt(timer % 60, 10);
+  var timer = duration, minutes, seconds;
+  var id = setInterval(function () {
+      minutes = parseInt(timer / 60, 10)
+      seconds = parseInt(timer % 60, 10);
 
-        minutes = minutes < 10 ? "0" + minutes : minutes;
-        seconds = seconds < 10 ? "0" + seconds : seconds;
+      minutes = minutes < 10 ? "0" + minutes : minutes;
+      seconds = seconds < 10 ? "0" + seconds : seconds;
 
-        display.innerText = minutes + ":" + seconds;
+      display.innerText = minutes + ":" + seconds;
 
-        if (--timer < 0) {
-            timer = 0;
-        display.innerText = 'Time is up!!';
-        inputSubmit.disabled = true;    
-        }
-    }, 1000);
+      if (--timer < 0 || win === true) {
+          timer = 0;
+      display.innerText = 'GO';
+      inputSubmit.disabled = true; 
+      gameReset.disabled = false; 
+      userInput.disabled = true; 
+      if (win !== true ) {
+        gameFeeback("You didn't guess the number",":(","And you're out of time" )
+        gameReset.focus();
+       }
+      clearInterval(id);
+      }
+  }, 1000);
+}
 
-    
+function playerHighlight(p1,p2) {
+  playerOneScore.style.textShadow = p1;
+  playerTwoScore.style.textShadow = p2;
 }
 
 goTimer.addEventListener('click', function () {
-    console.log('click')
-    goTimer.innerText = 10;
-    var oneMinute = 10;
-    startTimer(oneMinute, goTimer);
+  console.log('timer click')
+  inputSubmit.disabled = false;
+  userInput.disabled = false;
+  goTimer.disabled = true; 
+  gameFeeback('Ready to play??', '??', 'Guess away!!')
+  goTimer.innerText = '00:30';
+  var timeInSeconds = 29;
+  startTimer(timeInSeconds, goTimer);
+  userInput.focus();
+  if (gameCount%2 ===1 ) {
+    playerHighlight('0px 0px 9px #EB008B','none')
+  } else {
+    playerHighlight('none','0px 0px 9px #EB008B')
   }
-);
-
-
-
+});
 

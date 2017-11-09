@@ -35,7 +35,17 @@ h1 a span {
   font-weight: 700;
 }
 
+.scoreboard {
+  font-size: 2.5em;
+}
 
+.p1 .p2 {
+  font-weight: bold 700;
+}
+
+label {
+  display: none;
+}
 
 /* game input */
 
@@ -79,9 +89,6 @@ h2 {
   color: #EB008B;
 }
 
-
-
-
 /*buttons stylee*/
 
 button {
@@ -104,9 +111,13 @@ button:disabled {
 .reset {
   font-size: 1.1em;
   width: 360px;
- /* margin-top: 10px;*/
 }
 
+.front-page-button {
+  width: 400px;
+  height: 100px;
+  margin: 20px auto;
+}
 
 /* min max box */
 #range-container {
@@ -138,6 +149,12 @@ a:visited {
   color: #FFFFFF;
 }
 
+//box model to organize
+// margin
+// border 
+// padding 
+// then background color, etc - idiomatic css
+// alphabetize selectors 
 
-
+// ux - more user feedback
 
